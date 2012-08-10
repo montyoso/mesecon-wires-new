@@ -161,14 +161,14 @@ function mesecon:update_autoconnect(pos, secondcall)
 	nodename = minetest.env:get_node(pos).name
 	if string.find(nodename, "wires:") == nil then return nil end
 
-	xp = 	(minetest.get_item_group(minetest.env:get_node(xppos).name, "mesecon") == 1 or
-		minetest.get_item_group(minetest.env:get_node(xpympos).name, "mesecon") == 1) and 1 or 0
-	zp = 	(minetest.get_item_group(minetest.env:get_node(zppos).name, "mesecon") == 1 or
-		minetest.get_item_group(minetest.env:get_node(zpympos).name, "mesecon") == 1) and 1 or 0
-	xm = 	(minetest.get_item_group(minetest.env:get_node(xmpos).name, "mesecon") == 1 or
-		minetest.get_item_group(minetest.env:get_node(xmympos).name, "mesecon") == 1) and 1 or 0
-	zm = 	(minetest.get_item_group(minetest.env:get_node(zmpos).name, "mesecon") == 1 or 
-		minetest.get_item_group(minetest.env:get_node(zmympos).name, "mesecon") == 1) and 1 or 0
+	xp = 	(minetest.get_item_group(minetest.env:get_node(xppos).name, "mesecon") > 0 or
+		minetest.get_item_group(minetest.env:get_node(xpympos).name, "mesecon") > 0) and 1 or 0
+	zp = 	(minetest.get_item_group(minetest.env:get_node(zppos).name, "mesecon")  > 0 or
+		minetest.get_item_group(minetest.env:get_node(zpympos).name, "mesecon") > 0) and 1 or 0
+	xm = 	(minetest.get_item_group(minetest.env:get_node(xmpos).name, "mesecon") > 0 or
+		minetest.get_item_group(minetest.env:get_node(xmympos).name, "mesecon") > 0) and 1 or 0
+	zm = 	(minetest.get_item_group(minetest.env:get_node(zmpos).name, "mesecon") > 0 or 
+		minetest.get_item_group(minetest.env:get_node(zmympos).name, "mesecon") > 0) and 1 or 0
 
 
 	xpy = minetest.get_item_group(minetest.env:get_node(xpypos).name, "mesecon")
