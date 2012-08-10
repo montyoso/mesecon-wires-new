@@ -11,8 +11,6 @@
 -- 1 = there is one; 0 = there is none
 -- y always means y+
 
-local mesecon = {}
-
 box_center = {-1/16, -.5, -1/16, 1/16, -.5+1/32, 1/16}
 box_xp = {1/16, -.5, -1/16, 8/16, -.5+1/32, 1/16}
 box_zp = {-1/16, -.5, 1/16, 1/16, -.5+1/32, 8/16}
@@ -40,9 +38,9 @@ for zmy=0, 1 do
 			tostring(xpy)..tostring(zpy)..tostring(xmy)..tostring(zmy)
 
 	if nodeid == "00000000" then
-		groups = {snappy = 3, mesecon = 1}
+		groups = {dig_immediate = 3, mesecon = 1}
 	else
-		groups = {snappy = 3, mesecon = 1, not_in_creative_inventory = 1}
+		groups = {dig_immediate = 3, mesecon = 1, not_in_creative_inventory = 1}
 	end
 
 	local nodebox = {box_center}
@@ -71,7 +69,7 @@ for zmy=0, 1 do
 		paramtype2 = "facedir",
 		selection_box = {
               		type = "fixed",
-			fixed = nodebox
+			fixed = {-.5, -.5, -.5, .5, -.5+1/32, .5}
 		},
 		node_box = {
 			type = "fixed",
@@ -80,9 +78,36 @@ for zmy=0, 1 do
 		groups = groups,
 		walkable = false,
 		stack_max = 99,
-		drop = "wires:horizontal_off"
+		drop = "wires:00000000_off"
 	})
 
+	minetest.register_node("wires:"..nodeid.."_on", {
+		description = "Wire ID:"..nodeid,
+		drawtype = "nodebox",
+		tiles = {
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png"
+		},
+		paramtype = "light",
+		paramtype2 = "facedir",
+		selection_box = {
+              		type = "fixed",
+			fixed = {-.5, -.5, -.5, .5, -.5+1/32, .5}
+		},
+		node_box = {
+			type = "fixed",
+			fixed = nodebox
+		},
+		groups = {dig_immediate = 3, mesecon = 1, not_in_creative_inventory = 1},
+		walkable = false,
+		stack_max = 99,
+		drop = "wires:00000000_off"
+	})
+	mesecon:register_conductor("wires:"..nodeid.."_on", "wires:"..nodeid.."_off")
 end
 end
 end
@@ -93,38 +118,70 @@ end
 end
 
 minetest.register_on_placenode(function(pos, node)
-	if string.find(node.name, "wires:") ~= nil then
-		mesecon:update_autoconnect(pos)
-	end
+	mesecon:update_autoconnect(pos)
 end)
 
-function mesecon:update_autoconnect(pos)
-	xppos = {x=pos.x+1, y=pos.y, z=pos.z}
-	zppos = {x=pos.x, y=pos.y, z=pos.z+1}
-	xmpos = {x=pos.x-1, y=pos.y, z=pos.z}
-	zmpos = {x=pos.x, y=pos.y, z=pos.z-1}
-	xpypos = {x=pos.x+1, y=pos.y+1, z=pos.z}
-	zpypos = {x=pos.x, y=pos.y+1, z=pos.z+1}
-	xmypos = {x=pos.x-1, y=pos.y+1, z=pos.z}
-	zmypos = {x=pos.x, y=pos.y+1, z=pos.z-1}
+minetest.register_on_dignode(function(pos, node)
+	mesecon:update_autoconnect(pos)
+end)
 
-	xp = minetest.get_item_group(minetest.env:get_node(xppos), "mesecon")
-	zp = minetest.get_item_group(minetest.env:get_node(zppos), "mesecon")
-	xm = minetest.get_item_group(minetest.env:get_node(xmpos), "mesecon")
-	zm = minetest.get_item_group(minetest.env:get_node(zmpos), "mesecon")
+function mesecon:update_autoconnect(pos, secondcall)
+	local xppos = {x=pos.x+1, y=pos.y, z=pos.z}
+	local zppos = {x=pos.x, y=pos.y, z=pos.z+1}
+	local xmpos = {x=pos.x-1, y=pos.y, z=pos.z}
+	local zmpos = {x=pos.x, y=pos.y, z=pos.z-1}
 
-	xpy = minetest.get_item_group(minetest.env:get_node(xpypos), "mesecon")
-	zpy = minetest.get_item_group(minetest.env:get_node(zpypos), "mesecon")
-	xmy = minetest.get_item_group(minetest.env:get_node(xmypos), "mesecon")
-	zmy = minetest.get_item_group(minetest.env:get_node(zmypos), "mesecon")
+	local xpympos = {x=pos.x+1, y=pos.y-1, z=pos.z}
+	local zpympos = {x=pos.x, y=pos.y-1, z=pos.z+1}
+	local xmympos = {x=pos.x-1, y=pos.y-1, z=pos.z}
+	local zmympos = {x=pos.x, y=pos.y-1, z=pos.z-1}
 
-	if xpy then xp = 1 end
-	if zpy then zp = 1 end
-	if xmy then xm = 1 end
-	if zmy then zm = 1 end
+	local xpypos = {x=pos.x+1, y=pos.y+1, z=pos.z}
+	local zpypos = {x=pos.x, y=pos.y+1, z=pos.z+1}
+	local xmypos = {x=pos.x-1, y=pos.y+1, z=pos.z}
+	local zmypos = {x=pos.x, y=pos.y+1, z=pos.z-1}
+
+	if secondcall == nil then
+		mesecon:update_autoconnect(xppos, true)
+		mesecon:update_autoconnect(zppos, true)
+		mesecon:update_autoconnect(xmpos, true)
+		mesecon:update_autoconnect(zmpos, true)
+
+		mesecon:update_autoconnect(xpypos, true)
+		mesecon:update_autoconnect(zpypos, true)
+		mesecon:update_autoconnect(xmypos, true)
+		mesecon:update_autoconnect(zmypos, true)
+
+		mesecon:update_autoconnect(xpympos, true)
+		mesecon:update_autoconnect(zpympos, true)
+		mesecon:update_autoconnect(xmympos, true)
+		mesecon:update_autoconnect(zmympos, true)
+	end
+
+	if string.find(minetest.env:get_node(pos).name, "wires:") == nil then return nil end
+
+	xp = 	(minetest.get_item_group(minetest.env:get_node(xppos).name, "mesecon") == 1 or
+		minetest.get_item_group(minetest.env:get_node(xpympos).name, "mesecon") == 1) and 1 or 0
+	zp = 	(minetest.get_item_group(minetest.env:get_node(zppos).name, "mesecon") == 1 or
+		minetest.get_item_group(minetest.env:get_node(zpympos).name, "mesecon") == 1) and 1 or 0
+	xm = 	(minetest.get_item_group(minetest.env:get_node(xmpos).name, "mesecon") == 1 or
+		minetest.get_item_group(minetest.env:get_node(xmympos).name, "mesecon") == 1) and 1 or 0
+	zm = 	(minetest.get_item_group(minetest.env:get_node(zmpos).name, "mesecon") == 1 or 
+		minetest.get_item_group(minetest.env:get_node(zmympos).name, "mesecon") == 1) and 1 or 0
+
+
+	xpy = minetest.get_item_group(minetest.env:get_node(xpypos).name, "mesecon")
+	zpy = minetest.get_item_group(minetest.env:get_node(zpypos).name, "mesecon")
+	xmy = minetest.get_item_group(minetest.env:get_node(xmypos).name, "mesecon")
+	zmy = minetest.get_item_group(minetest.env:get_node(zmypos).name, "mesecon")
+
+	if xpy == 1 then xp = 1 end
+	if zpy == 1 then zp = 1 end
+	if xmy == 1 then xm = 1 end
+	if zmy == 1 then zm = 1 end
 
 	local nodeid = 	tostring(xp )..tostring(zp )..tostring(xm )..tostring(zm )..
 			tostring(xpy)..tostring(zpy)..tostring(xmy)..tostring(zmy)
 
-	minetest.env:add_node(pos, {name = "wires:"..nodeid.."_off"})
+	minetest.env:set_node(pos, {name = "wires:"..nodeid.."_off"})
 end
