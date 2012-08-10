@@ -158,7 +158,8 @@ function mesecon:update_autoconnect(pos, secondcall)
 		mesecon:update_autoconnect(zmympos, true)
 	end
 
-	if string.find(minetest.env:get_node(pos).name, "wires:") == nil then return nil end
+	nodename = minetest.env:get_node(pos).name
+	if string.find(nodename, "wires:") == nil then return nil end
 
 	xp = 	(minetest.get_item_group(minetest.env:get_node(xppos).name, "mesecon") == 1 or
 		minetest.get_item_group(minetest.env:get_node(xpympos).name, "mesecon") == 1) and 1 or 0
@@ -183,5 +184,9 @@ function mesecon:update_autoconnect(pos, secondcall)
 	local nodeid = 	tostring(xp )..tostring(zp )..tostring(xm )..tostring(zm )..
 			tostring(xpy)..tostring(zpy)..tostring(xmy)..tostring(zmy)
 
-	minetest.env:set_node(pos, {name = "wires:"..nodeid.."_off"})
+	if string.find(nodename, "_off") ~= nil then
+		minetest.env:set_node(pos, {name = "wires:"..nodeid.."_off"})
+	else
+		minetest.env:set_node(pos, {name = "wires:"..nodeid.."_on" })
+	end
 end
