@@ -11,16 +11,18 @@
 -- 1 = there is one; 0 = there is none
 -- y always means y+
 
-box_center = {-1/16, -.5, -1/16, 1/16, -.5+1/32, 1/16}
-box_xp = {1/16, -.5, -1/16, 8/16, -.5+1/32, 1/16}
-box_zp = {-1/16, -.5, 1/16, 1/16, -.5+1/32, 8/16}
-box_xm = {-8/16, -.5, -1/16, -1/16, -.5+1/32, 1/16}
-box_zm = {-1/16, -.5, -8/16, 1/16, -.5+1/32, -1/16}
+box_center = {-1/16, -.5, -1/16, 1/16, -.5+1/64, 1/16}
+box_bump = {-2/16, -.5, -2/16, 2/16, -.5+1/64, 2/16}
 
-box_xpy = {.5-1/32, -.5+1/32, -1/16, .5, .5+1/32, 1/16}
-box_zpy = {-1/16, -.5+1/32, .5-1/32, 1/16, .5+1/32, .5}
-box_xmy = {-.5+1/32, -.5+1/32, -1/16, -.5, .5+1/32, 1/16}
-box_zmy = {-1/16, -.5+1/32, -.5+1/32, 1/16, .5+1/32, -.5}
+box_xp = {1/16, -.5, -1/16, 8/16, -.5+1/64, 1/16}
+box_zp = {-1/16, -.5, 1/16, 1/16, -.5+1/64, 8/16}
+box_xm = {-8/16, -.5, -1/16, -1/16, -.5+1/64, 1/16}
+box_zm = {-1/16, -.5, -8/16, 1/16, -.5+1/64, -1/16}
+
+box_xpy = {.5-1/64, -.5+1/64, -1/16, .5, .5+1/64, 1/16}
+box_zpy = {-1/16, -.5+1/64, .5-1/64, 1/16, .5+1/64, .5}
+box_xmy = {-.5, -.5+1/64, -1/16, -.5+1/64, .5+1/64, 1/16}
+box_zmy = {-1/16, -.5+1/64, -.5, 1/16, .5+1/64, -.5+1/64}
 
 for xp=0, 1 do
 for zp=0, 1 do
@@ -43,16 +45,22 @@ for zmy=0, 1 do
 		groups = {dig_immediate = 3, mesecon = 1, not_in_creative_inventory = 1}
 	end
 
-	local nodebox = {box_center}
-	if xp == 1 then table.insert(nodebox, box_xp) end
-	if zp == 1 then table.insert(nodebox, box_zp) end
-	if xm == 1 then table.insert(nodebox, box_xm) end
-	if zm == 1 then table.insert(nodebox, box_zm) end
+	local nodebox = {}
+	local adjx = false
+	local adjz = false
+	if xp == 1 then table.insert(nodebox, box_xp) adjx = true end
+	if zp == 1 then table.insert(nodebox, box_zp) adjz = true end
+	if xm == 1 then table.insert(nodebox, box_xm) adjx = true end
+	if zm == 1 then table.insert(nodebox, box_zm) adjz = true end
 	if xpy == 1 then table.insert(nodebox, box_xpy) end
 	if zpy == 1 then table.insert(nodebox, box_zpy) end
 	if xmy == 1 then table.insert(nodebox, box_xmy) end
 	if zmy == 1 then table.insert(nodebox, box_zmy) end
-
+	if adjx and adjz then
+		table.insert(nodebox, box_bump)
+	else
+		table.insert(nodebox, box_center)
+	end
 
 	minetest.register_node("wires:"..nodeid.."_off", {
 		description = "Wire ID:"..nodeid,
