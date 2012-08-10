@@ -64,7 +64,7 @@ for zmy=0, 1 do
 
 	if nodeid == "00000000" then
 		nodebox = {-8/16, -.5, -1/16, 8/16, -.5+1/64, 1/16}
-	end
+	else
 
 	minetest.register_node("wires:"..nodeid.."_off", {
 		description = "Wire ID:"..nodeid,
