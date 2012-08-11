@@ -58,8 +58,40 @@ for zmy=0, 1 do
 	if zmy == 1 then table.insert(nodebox, box_zmy) end
 	if adjx and adjz then
 		table.insert(nodebox, box_bump)
+		tiles_off = {
+			"wires_off.png",
+			"wires_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png"
+		}
+		tiles_on = {
+			"wires_on.png",
+			"wires_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png"
+		}
 	else
 		table.insert(nodebox, box_center)
+		tiles_off = {
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png"
+		}
+		tiles_on = {
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png"
+		}
 	end
 
 	if nodeid == "00000000" then
@@ -69,14 +101,7 @@ for zmy=0, 1 do
 	minetest.register_node("wires:"..nodeid.."_off", {
 		description = "Wire ID:"..nodeid,
 		drawtype = "nodebox",
-		tiles = {
-			"wires_vertical_off.png",
-			"wires_vertical_off.png",
-			"wires_vertical_off.png",
-			"wires_vertical_off.png",
-			"wires_vertical_off.png",
-			"wires_vertical_off.png"
-		},
+		tiles = tiles_off,
 		inventory_image = "wires_inv.png",
 		wield_image = "wires_inv.png",
 		paramtype = "light",
@@ -98,14 +123,7 @@ for zmy=0, 1 do
 	minetest.register_node("wires:"..nodeid.."_on", {
 		description = "Wire ID:"..nodeid,
 		drawtype = "nodebox",
-		tiles = {
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png"
-		},
+		tiles = tiles_on,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
