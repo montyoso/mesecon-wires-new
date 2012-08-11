@@ -6,23 +6,28 @@
 -- License: WTFPL
 --
 
+minetest.register_alias("wires:wire", "wires:00000000_off")
+
 -- naming scheme: wire:(xp)(zp)(xm)(zm)_on/off
 -- The conditions in brackets define whether there is a mesecon at that place or not
 -- 1 = there is one; 0 = there is none
 -- y always means y+
 
-box_center = {-1/16, -.5, -1/16, 1/16, -.5+1/64, 1/16}
-box_bump = {-2/16, -.5, -2/16, 2/16, -.5+1/64, 2/16}
+box_center = {-1/16, -.5, -1/16, 1/16, -.5+1/16, 1/16}
+box_bump1 =  { -3/16, -8/16,  -3/16, 3/16, -13/32, 3/16 }
+box_bump2 =  { -5/32, -13/32, -5/32, 5/32, -12/32, 5/32 }
 
-box_xp = {1/16, -.5, -1/16, 8/16, -.5+1/64, 1/16}
-box_zp = {-1/16, -.5, 1/16, 1/16, -.5+1/64, 8/16}
-box_xm = {-8/16, -.5, -1/16, -1/16, -.5+1/64, 1/16}
-box_zm = {-1/16, -.5, -8/16, 1/16, -.5+1/64, -1/16}
+-- box_bump = {{-2/16, -.5, -2/16, 2/16, -.5+1/16, 2/16}
 
-box_xpy = {.5-1/64, -.5+1/64, -1/16, .5, .5+1/64, 1/16}
-box_zpy = {-1/16, -.5+1/64, .5-1/64, 1/16, .5+1/64, .5}
-box_xmy = {-.5, -.5+1/64, -1/16, -.5+1/64, .5+1/64, 1/16}
-box_zmy = {-1/16, -.5+1/64, -.5, 1/16, .5+1/64, -.5+1/64}
+box_xp = {1/16, -.5, -1/16, 8/16, -.5+1/16, 1/16}
+box_zp = {-1/16, -.5, 1/16, 1/16, -.5+1/16, 8/16}
+box_xm = {-8/16, -.5, -1/16, -1/16, -.5+1/16, 1/16}
+box_zm = {-1/16, -.5, -8/16, 1/16, -.5+1/16, -1/16}
+
+box_xpy = {.5-1/16, -.5+1/16, -1/16, .5, .5+1/16, 1/16}
+box_zpy = {-1/16, -.5+1/16, .5-1/16, 1/16, .5+1/16, .5}
+box_xmy = {-.5, -.5+1/16, -1/16, -.5+1/16, .5+1/16, 1/16}
+box_zmy = {-1/16, -.5+1/16, -.5, 1/16, .5+1/16, -.5+1/16}
 
 for xp=0, 1 do
 for zp=0, 1 do
@@ -41,8 +46,10 @@ for zmy=0, 1 do
 
 	if nodeid == "00000000" then
 		groups = {dig_immediate = 3, mesecon = 1}
+		wiredesc = "Mesecons Wire"
 	else
 		groups = {dig_immediate = 3, mesecon = 1, not_in_creative_inventory = 1}
+		wiredesc = "Mesecons Wire (ID: "..nodeid..")"
 	end
 
 	local nodebox = {}
@@ -57,27 +64,59 @@ for zmy=0, 1 do
 	if xmy == 1 then table.insert(nodebox, box_xmy) end
 	if zmy == 1 then table.insert(nodebox, box_zmy) end
 	if adjx and adjz then
-		table.insert(nodebox, box_bump)
+		table.insert(nodebox, box_bump1)
+		table.insert(nodebox, box_bump2)
+		tiles_off = {
+			"wires_off.png",
+			"wires_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png",
+			"wires_vertical_off.png"
+		}
+		tiles_on = {
+			"wires_on.png",
+			"wires_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png"
+		}
 	else
 		table.insert(nodebox, box_center)
-	end
-
-	minetest.register_node("wires:"..nodeid.."_off", {
-		description = "Wire ID:"..nodeid,
-		drawtype = "nodebox",
-		tiles = {
+		tiles_off = {
 			"wires_vertical_off.png",
 			"wires_vertical_off.png",
 			"wires_vertical_off.png",
 			"wires_vertical_off.png",
 			"wires_vertical_off.png",
 			"wires_vertical_off.png"
-		},
+		}
+		tiles_on = {
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png",
+			"wires_vertical_on.png"
+		}
+	end
+
+	if nodeid == "00000000" then
+		nodebox = {-8/16, -.5, -1/16, 8/16, -.5+1/16, 1/16}
+	end
+
+	minetest.register_node("wires:"..nodeid.."_off", {
+		description = wiredesc,
+		drawtype = "nodebox",
+		tiles = tiles_off,
+		inventory_image = "wires_inv.png",
+		wield_image = "wires_inv.png",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
               		type = "fixed",
-			fixed = {-.5, -.5, -.5, .5, -.5+1/32, .5}
+			fixed = {-.5, -.5, -.5, .5, -.5+1/16, .5}
 		},
 		node_box = {
 			type = "fixed",
@@ -92,19 +131,12 @@ for zmy=0, 1 do
 	minetest.register_node("wires:"..nodeid.."_on", {
 		description = "Wire ID:"..nodeid,
 		drawtype = "nodebox",
-		tiles = {
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png",
-			"wires_vertical_on.png"
-		},
+		tiles = tiles_on,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
               		type = "fixed",
-			fixed = {-.5, -.5, -.5, .5, -.5+1/32, .5}
+			fixed = {-.5, -.5, -.5, .5, -.5+1/16, .5}
 		},
 		node_box = {
 			type = "fixed",
