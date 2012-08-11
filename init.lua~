@@ -6,8 +6,6 @@
 -- License: WTFPL
 --
 
-minetest.register_alias("wires:wire", "wires:00000000_off")
-
 -- naming scheme: wire:(xp)(zp)(xm)(zm)_on/off
 -- The conditions in brackets define whether there is a mesecon at that place or not
 -- 1 = there is one; 0 = there is none
