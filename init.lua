@@ -12,7 +12,10 @@
 -- y always means y+
 
 box_center = {-1/16, -.5, -1/16, 1/16, -.5+1/16, 1/16}
-box_bump = {-2/16, -.5, -2/16, 2/16, -.5+1/16, 2/16}
+box_bump1 =  { -3/16, -8/16,  -3/16, 3/16, -13/32, 3/16 }
+box_bump2 =  { -5/32, -13/32, -5/32, 5/32, -12/32, 5/32 }
+
+-- box_bump = {{-2/16, -.5, -2/16, 2/16, -.5+1/16, 2/16}
 
 box_xp = {1/16, -.5, -1/16, 8/16, -.5+1/16, 1/16}
 box_zp = {-1/16, -.5, 1/16, 1/16, -.5+1/16, 8/16}
@@ -57,7 +60,8 @@ for zmy=0, 1 do
 	if xmy == 1 then table.insert(nodebox, box_xmy) end
 	if zmy == 1 then table.insert(nodebox, box_zmy) end
 	if adjx and adjz then
-		table.insert(nodebox, box_bump)
+		table.insert(nodebox, box_bump1)
+		table.insert(nodebox, box_bump2)
 		tiles_off = {
 			"wires_off.png",
 			"wires_off.png",
