@@ -46,8 +46,10 @@ for zmy=0, 1 do
 
 	if nodeid == "00000000" then
 		groups = {dig_immediate = 3, mesecon = 1}
+		wiredesc = "Mesecons Wire"
 	else
 		groups = {dig_immediate = 3, mesecon = 1, not_in_creative_inventory = 1}
+		wiredesc = "Mesecons Wire (ID: "..nodeid..")"
 	end
 
 	local nodebox = {}
@@ -105,7 +107,7 @@ for zmy=0, 1 do
 	end
 
 	minetest.register_node("wires:"..nodeid.."_off", {
-		description = "Wire ID:"..nodeid,
+		description = wiredesc,
 		drawtype = "nodebox",
 		tiles = tiles_off,
 		inventory_image = "wires_inv.png",
